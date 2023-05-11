@@ -64,10 +64,76 @@ public class Bateria {
     
     public void notificarObservadores(){
         for (Observador ob : observador) {
-            ob.actualizar(bateria, tiempoRestante, cargando, suspendida);
             ob.actualizar();
             
         }
     }
 
+}
+
+
+public class Bateria extends Observable {
+    private int porcentajeCarga;
+    private int tiempoRestante;
+    private boolean estaCargando;
+
+    public Bateria(int porcentajeCarga, int tiempoRestante, boolean estaCargando) {
+        this.porcentajeCarga = porcentajeCarga;
+        this.tiempoRestante = tiempoRestante;
+        this.estaCargando = estaCargando;
+    }
+
+    public void cargar() {
+        if (!estaCargando) {
+            estaCargando = true;
+            while (porcentajeCarga < 100) {
+                try {
+                    Thread.sleep(1000 * 60);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                porcentajeCarga += 2;
+                tiempoRestante = (100 - porcentajeCarga) * 30;
+                setChanged();
+                notifyObservers();
+            }
+            estaCargando = false;
+        }
+    }
+
+    public void descargar() {
+        if (estaCargando) {
+            return;
+        }
+        while (porcentajeCarga > 0) {
+            try {
+                Thread.sleep(1000 * 60);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            porcentajeCarga -= 2;
+            tiempoRestante = (100 - porcentajeCarga) * 30;
+            setChanged();
+            notifyObservers();
+        }
+    }
+
+    public void desconectar() {
+        estaCargando = false;
+        tiempoRestante = 0;
+        setChanged();
+        notifyObservers();
+    }
+
+    public int getPorcentajeCarga() {
+        return porcentajeCarga;
+    }
+
+    public int getTiempoRestante() {
+        return tiempoRestante;
+    }
+
+    public boolean estaCargando() {
+        return estaCargando;
+    }
 }

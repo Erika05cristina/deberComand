@@ -9,7 +9,18 @@ package com.mycompany.saquicelaj_villae;
  * @author Kristina
  */
 public class ObservadoTiempoRestante extends Observador {
+ private Bateria bateria;
 
+    public ObservadorTiempoRestante(Bateria bateria) {
+        this.bateria = bateria;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o == bateria) {
+            System.out.println("Tiempo restante: " + bateria.getTiempoRestante() + " minutos");
+        }
+    }
     @Override
     public void actualizar() {
 
